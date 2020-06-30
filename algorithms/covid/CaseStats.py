@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from numbers import Rational
+from typing import NamedTuple
 
 @dataclass
 class CaseStats:
@@ -21,6 +22,7 @@ class CaseStats:
     avg_flow: Rational
     onset_days: int
 
+@dataclass
 class CaseStatsByGeo:
     """
     Struct holding relevant information that can be cumulatively extracted
@@ -42,3 +44,30 @@ class CaseStatsByGeo:
     max_flow: Rational
     avg_flow: Rational
     onset_days: int
+
+class CaseStatsTup(NamedTuple):
+    """Just to play nice with pandas"""
+    stock: Rational
+    flow: Rational
+    max_flow: Rational
+    avg_flow: Rational
+    onset_days: int
+
+class CaseStatsByGeoTup(NamedTuple):
+    """Just to play nice with pandas"""
+    geo: str
+    stock: Rational
+    flow: Rational
+    max_flow: Rational
+    avg_flow: Rational
+    onset_days: int
+
+class CaseStatOps:
+
+    @staticmethod
+    def toCaseStatsTup(cs: CaseStats) -> CaseStatsTup:
+        return CaseStatsTup(cs.stock, cs.flow, cs.max_flow, cs.avg_flow, cs.onset_days)
+
+    @staticmethod
+    def toCaseStatsByGeoTup(cs: CaseStatsByGeo) -> CaseStatsByGeoTup:
+        return CaseStatsByGeoTup(cs.geo, cs.stock, cs.flow, cs.max_flow, cs.avg_flow, cs.onset_days)

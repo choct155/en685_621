@@ -42,7 +42,7 @@ class CaseAnalyzer:
         return loop(data)
 
     @staticmethod
-    def max_mean_by_area(data: pd.DataFrame) -> pd.DataFrame:
+    def max_mean_by_area(data: pd.DataFrame) -> List[CaseStatsByGeo]:
         geos: Sequence[str] = data.columns
         def get_stats(data: np.array, geo: str) -> CaseStatsByGeo:
             stats: List[CaseStats] = CaseAnalyzer.fold_stats(data)
@@ -56,4 +56,4 @@ class CaseAnalyzer:
                 last_stat.onset_days
             )
         stats_by_geo: List[CaseStatsByGeo] = [get_stats(data[geo], geo) for geo in geos]
-        return pd.DataFrame(stats_by_geo)
+        return stats_by_geo

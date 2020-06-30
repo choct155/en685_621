@@ -2,7 +2,7 @@ import pandas as pd
 from typing import Sequence, Dict
 from algorithms.covid.Config import Config
 
-class Reader:
+class CovidReader:
 
     def __init__(self, config: Config) -> None:
         self.file_paths: Dict[str, str] = config.data_files
