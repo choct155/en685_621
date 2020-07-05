@@ -21,7 +21,8 @@ class Moment:
 
     @staticmethod
     def variance(data: Vector) -> Rational:
-        sum_squares: Rational = ops.foldSeq(data, 0, lambda out, next: out + (next - Moment.mean(data))**2)
+        mu: Rational = Moment.mean(data)
+        sum_squares: Rational = ops.foldSeq(data, 0, lambda out, xi: out + (xi - mu)**2)
         return sum_squares / (data.length - 1)
 
     @staticmethod

@@ -19,6 +19,8 @@ withinTol: Callable[[float, float], bool] = lambda x, y: (x - y) < 0.01
 
 def test_mean() -> None:
     assert Moment.mean(vsimple) == 2.25
+    test: float = Moment.mean(vn01)
+    truth: float = np.mean(n01)
     assert withinTol(Moment.mean(vn01), np.mean(n01)) == True
 
 
@@ -28,6 +30,8 @@ def test_trimmed_mean() -> None:
     assert withinTol(Moment.trimmed_mean(vn01, p), np.mean(n01[p:-p]))
 
 def test_variance() -> None:
+    test: float = Moment.variance(vn01)
+    truth: float = np.var(n01)
     assert withinTol(Moment.variance(vn01), np.var(n01)) == True
 
 def test_std_dev() -> None:
