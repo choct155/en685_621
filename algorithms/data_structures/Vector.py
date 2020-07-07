@@ -79,4 +79,11 @@ class Vector(BaseVector):
         sorted_data: List[Rational] = tree.sorted_values()
         return Vector(sorted_data)
 
+    def conditional_prop(self, predicate: Callable[[Rational], bool]) -> Rational:
+        def f(counts: Tuple[Rational, Rational], next_val: Rational) -> Tuple[Rational, Rational]:
+            old_total, old_passed = counts
+            return (old_total + 1, old_passed + 1 if predicate(next_val) else old_passed)
+        total, passed = ops.foldSeq(self.data, (0,0), f)
+        return passed / total
+
 

@@ -13,9 +13,13 @@ def test_confidence_interval() -> None:
     od: dc.OutlierDetector = dc.OutlierDetector(n12)
     ci: dc.ConfidenceIntervalResults = od.byConfidenceInterval()
 
-    data_good: Iterator[bool] = map(lambda obs: (obs <= upper) & (obs >= lower), ci.out_data) 
-    upper_good: Iterator[bool] = map(lambda obs: obs > upper, ci.upper_outliers)
-    lower_good: Iterator[bool] = map(lambda obs: obs < lower, ci.lower_outliers)
+    data_good: List[bool] = list(map(lambda obs: (obs <= upper) & (obs >= lower), ci.out_data))
+    upper_good: List[bool] = list(map(lambda obs: obs > upper, ci.upper_outliers))
+    lower_good: List[bool] = list(map(lambda obs: obs < lower, ci.lower_outliers))
+
+    data_good_check = list(map(lambda obs: (obs, (obs <= upper) & (obs >= lower)), ci.out_data))
+    for pair in data_good_check:
+        assert (pair[1] == True) & isinstance(pair[0], float)
 
     assert (len(ci.out_data) > 0) & (np.all(list(data_good)))
     assert (len(ci.upper_outliers) > 0) & (np.all(list(upper_good)))

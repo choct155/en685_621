@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Callable, Tuple
 from numbers import Rational
 from dataclasses import dataclass
 from algorithms.stats.Moment import Moment
@@ -8,6 +8,9 @@ import numpy as np
 
 @dataclass
 class ConfidenceIntervalResults:
+    mean: Rational
+    std_upper: Rational
+    std_lower: Rational
     out_data: List[Rational]
     lower_outliers: List[Rational]
     upper_outliers: List[Rational]
@@ -36,6 +39,25 @@ class OutlierDetector:
         upper_outliers, upper_data = ops.splitList(upper, lambda obs: obs <= global_mean + upper_std_dev)
         lower_outliers, lower_data = ops.splitList(lower, lambda obs: obs >= global_mean - lower_std_dev)
 
-        return ConfidenceIntervalResults(upper_data + lower_data, lower_outliers, upper_outliers)
+        return ConfidenceIntervalResults(
+            global_mean,
+            upper_std_dev,
+            lower_std_dev,
+            upper_data + lower_data, 
+            Vector(lower_outliers).sort().data, 
+            Vector(upper_outliers).sort().data
+        )
+
+    def remove_n_outliers(self, n: int) -> List[Rational]:
+        ci: ConfidenceIntervalResults = self.byConfidenceInterval()
+        dev: Callable[[Rational], Tuple[Rational, Rational]] = lambda obs: (obs, abs(ci.mean - obs))
+        # TODO: Cheating here with a built in
+        outlier_deviations: List[Tuple[Rational, Rational]] = sorted(
+            list(map(dev, ci.upper_outliers + ci.lower_outliers)), 
+            key=lambda tup: tup[1]
+        )
+        with_n_removed: List[Rational] = list(map(lambda tup: tup[0], outlier_deviations[:-n])) if n < len(outlier_deviations) else []
+
+        return ci.out_data + with_n_removed
 
         
