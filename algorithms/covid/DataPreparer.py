@@ -20,9 +20,9 @@ class DataPreparer:
     def __series_by_city(self, long_data: pd.DataFrame, state: str) -> pd.DataFrame:
         agg_by_city: pd.DataFrame = (
             long_data
-            .groupby(["city", "state", "date"])
-            .sum()
-            .reset_index()
+                .groupby(["city", "state", "date"])
+                .sum()
+                .reset_index()
         )
         agg_by_city.columns = ["city", "state", "date", "count"]
         agg_by_city["date"] = pd.to_datetime(agg_by_city["date"])
