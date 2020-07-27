@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from typing import Dict, Tuple, Callable
+from typing import Dict, Tuple, Callable, List
 from numbers import Rational
 from algorithms.iris.DataGenerator import DataGenerator
 from algorithms.data_structures.Vector import Vector
@@ -107,3 +107,27 @@ class IrisOps:
                 col2_prop: Rational = Vector(data[col2]).conditional_prop(lambda x: col2_overlap(x)) 
                 out[i][j] = col2_prop
         return out
+
+    @staticmethod
+    def test_train_split(raw_data: Dict[str, np.array], labels: List[str], train_prop: float) -> Tuple[np.array, np.array]:
+    
+        def process_label_group(data: np.array, idx: int) -> np.array:
+            n: int = len(data)
+            lab_idx: np.array = np.repeat(idx, n).reshape(n, 1)
+            return np.concatenate([lab_idx, data], axis=1)
+    
+        print("Label Mapping: ", list(enumerate(labels)))
+        data: np.array = np.concatenate(list(
+            map(lambda lab: process_label_group(raw_data[lab[1]], lab[0]), enumerate(labels))
+        ))
+        permuted: np.array = np.random.permutation(data)
+    
+        train_n: int = int(len(permuted) * 0.8)
+        return (permuted[:train_n], permuted[train_n:])
+
+    @staticmethod
+    def process_data(data: np.array, pos_y_class: int) -> Tuple[np.array, np.array]:
+        y: np.array = np.where(data[:,0] == pos_y_class, 1, -1)
+        x_in: np.array = data[:, 1:]
+        X: np.array = (x_in - x_in.mean(axis=0)) / x_in.std(axis=0)
+        return y, X
